@@ -2,80 +2,92 @@
 % Please edit documentation in R/drugTimeResponseCurve.R
 \name{drugTimeResponseCurve}
 \alias{drugTimeResponseCurve}
-\title{Compares viabilities at a given dose over different experimental duration}
+\title{Compares viabilities at a given dose over different experimental durations}
 \usage{
-drugTimeResponseCurve(tSets, duration, cellline, dose, drug,
-  plot.type = "Actual", summarize.replicates = TRUE,
-  viability_as_pct = TRUE, xlim = c(0, 24), ylim = c(0, 100), mycol,
-  x.custom.ticks = NULL, title, lwd = 1, cex = 0.5, cex.main = 0.9,
-  legend.loc = "topleft", verbose = TRUE)
+drugTimeResponseCurve(
+  tSet,
+  duration = NULL,
+  cell_lines = NULL,
+  dose = NULL,
+  drugs = NULL,
+  summarize_replicates = TRUE,
+  line_width = 1,
+  point_size = 2.5,
+  verbose = TRUE,
+  ggplot_args = NULL
+)
 }
 \arguments{
-\item{tSets}{[ToxicoSet] A ToxicoSet or list of ToxicoSets to be plotted in
-this graph.}
+\item{tSet}{\code{ToxicoSet} A ToxicoSet to be plotted in
+this figure}
 
-\item{duration}{[character] A vector of durations to include in the plot.}
+\item{duration}{\code{character} A vector of durations to include in the plot.}
 
-\item{cellline}{[character] A vector of cell lines to include in the plot.}
+\item{cell_lines}{\code{character} A vector of cell lines to include in the
+plot.}
 
-\item{dose}{[character] A vector of dose levels to be included in the
+\item{dose}{\code{character} A vector of dose levels to be included in the
 plot. Default to include all dose levels available for a drug. Must include
 at minimum two dose levels, one of witch is "Control".}
 
-\item{drug}{[character] A vector of drugs to be included in this plot.}
+\item{drugs}{\code{character} A drugs or pair of drugs to be plotted.}
 
-\item{plot.type}{[character] The type of plot which you would like returned. Options
-are 'Actual' for unfitted curve, 'Fitted' for the fitted curve and 'Both'
-to display 'Actual and 'Fitted' in the sample plot.}
+\item{summarize_replicates}{\code{logical} If TRUE will average viability
+across replicates for each unique drug-dose-duration combination.}
 
-\item{summarize.replicates}{[logical] If true will take the average of all
-replicates at each time point per gene and duration. This release has not
-yet implemented this feature.}
+\item{line_width}{\code{numeric} A number specifying the thickness of lines
+in the plot, as passed to size in geom_line(). Defaults to 1.}
 
-\item{viability_as_pct}{[logical] A vector specifying if viabilities should
-be plotted as a percentage. Defaults to TRUE.}
+\item{point_size}{\code{numeric} A number specifying how large points should
+be in the plot, as passed to size in geom_point(). Defaults to 2.5.}
 
-\item{xlim}{[numeric] A vector of minimum and maximum values for the x-axis
-of the returned plot.}
+\item{verbose}{\code{boolean} Should warning messages about the data passed
+in be printed?}
 
-\item{ylim}{[numeric] A vector of minimum and miximum values for the y-axis
-of the returned plot.}
-
-\item{mycol}{[vector] A vector of length equal to the lenth of the tSets
-argument specifying which RColorBrewer colour to use per tSet. Default
-colours will be used if this parameter is excluded.}
-
-\item{x.custom.ticks}{[vector] A numeric vector of the distance between major
-and minor ticks on the x-axis. If excluded ticks appear only where duration
-values are specified.}
-
-\item{title}{[character] A string containing the desired plot name. If excluded
-a title wil be generated automatically.}
-
-\item{lwd}{[numeric] The line width to plot width}
-
-\item{cex}{[numeric] The cex parameter passed to plot}
-
-\item{cex.main}{[numeric] The cex.main parameter passed to plot, controls
-the size of the titles}
-
-\item{legend.loc}{[character] The location of the legend as passed to the
-legends function from base graphics. Recommended values are 'topright' or
-'topleft'. Default is 'topleft'.}
-
-\item{verbose}{[boolean] Should warning messages about the data passed in be printed?}
+\item{ggplot_args}{\code{list} A list of ggplot2 functions which can be
+called using the plot + function() syntax. This allows arbitrary
+customization of the plot including changing the title, axis labels,
+colours, etc. Please see the included examples for basic usage or ggplot2
+documentation for advanced customization. Alternatively, you could assign
+the return value to a variable and add the customization yourself using
+plot + function().}
 }
 \value{
-Plot of the viabilities for each drug vs time of exposure
+Plot of the viabilities for each drugs vs time of exposure
 }
 \description{
-Description of this function
+This function generates a plot visualizing the relationship between gene
+  expression, time and dose level for the selected tSet. The plot is generated
+  with ggplot2 and can be customized using ggplot plot + function() syntax.
 }
 \examples{
-if (interactive()) {
-  ToxicoGx::drugTimeResponseCurve(TGGATESsmall, cellline = "Hepatocyte",
-    dose = c("Control", "Low", "Middle"),
-    drug = "naphthyl isothiocyanate", duration = c("2", "8", "24"))
-}
+  library(ggplot2)
+
+  # Default settings
+  plot <- drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
+  dose = c("Control", "Low", "Middle"), drugs = drugNames(TGGATESsmall)[6],
+  duration = c("2", "8", "24"))
+
+  # Customize title, x/y labels, x/y limits, colour palette and define
+  # custom ticks for x axis using the function argument ggplot2_args
+  customizations <- list(labs(title= 'My Custom Title', ylab = 'The y-axis'),
+                         xlim(c(2, 24)), ylim(c(99,105)),
+                         scale_color_brewer(palette="Set1"),
+                         scale_x_continuous(breaks=c(2, 8, 24),
+                           labels = c("Two", "Eight", "Twenty-Four"))
+                         )
+
+   if(interactive()) {
+      drugTimeResponseCurve(TGGATESsmall, cell_lines = "Hepatocyte",
+        dose = c("Control", "Low", "Middle"),
+        drugs = drugNames(TGGATESsmall)[6], duration = c("2", "8", "24"),
+        ggplot_args = customizations)
+   }
+
+   # Customize the plot using standard ggplot2 syntax
+   if(interactive()) {
+      plot + labs(title= 'My Custom Title', ylab = 'The y-axis') +
+        xlim(c(2, 24)) + ylim(c(99,105)) + scale_color_brewer(palette="Set1")
+   }
 
 }

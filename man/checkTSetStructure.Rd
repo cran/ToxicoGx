@@ -4,7 +4,7 @@
 \alias{checkTSetStructure}
 \title{A function to verify the structure of a ToxicoSet}
 \usage{
-checkTSetStructure(tSet, plotDist = FALSE, result.dir = tempdir())
+checkTSetStructure(tSet, plotDist = FALSE, result.dir = ".")
 }
 \arguments{
 \item{tSet}{A \code{ToxicoSet} object}

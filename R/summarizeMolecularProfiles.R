@@ -10,8 +10,8 @@
 #' data(TGGATESsmall)
 #' summMP <- ToxicoGx::summarizeMolecularProfiles(
 #'   tSet = TGGATESsmall, mDataType = "rna",
-#'   cell.lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
-#'   features = fNames(TGGATESsmall,"rna"), duration = "8",
+#'   cell_lines=cellNames(TGGATESsmall), drugs = head(drugNames(TGGATESsmall)),
+#'   features = fNames(TGGATESsmall,"rna")[1:100], duration = "8",
 #'   dose = c("Control", "High"), summary.stat = "median",
 #'   fill.missing = TRUE, verbose=TRUE
 #'   )
@@ -27,14 +27,14 @@
 #' @param mDataType \code{character} which one of the molecular data types
 #' to use in the analysis, out of all the molecular data types available for the tSet
 #' for example: rna
-#' @param cell.lines \code{character} The cell lines to be summarized.
+#' @param cell_lines \code{character} The cell lines to be summarized.
 #'   If any cell.line has no data, missing values will be created
 #' @param drugs \code{character} The drugs to be summarized
 #' @param features \code{character} A vector of the feature names to include in the summary
 #' @param duration \code{character} A vector of durations to summarize across
 #' @param dose \code{character} The dose level to summarize replicates across
 #' @param summary.stat \code{character} which summary method to use if there are repeated
-#'   cell.lines? Choices are "mean", "median", "first", or "last"
+#'   cell_lines? Choices are "mean", "median", "first", or "last"
 #' @param fill.missing \code{boolean} should the missing cell lines not in the
 #'   molecular data object be filled in with missing values?
 #' @param summarize A flag which when set to FALSE (defaults to TRUE) disables summarizing and
@@ -44,7 +44,7 @@
 #'   per cell line.
 #' @importFrom utils setTxtProgressBar txtProgressBar
 #' @importFrom Biobase ExpressionSet exprs pData AnnotatedDataFrame assayDataElement assayDataElement<- fData<-
-#' @import SummarizedExperiment
+#' @importFrom SummarizedExperiment SummarizedExperiment
 #'
 #' @export
 #'
@@ -53,10 +53,10 @@
 summarizeMolecularProfiles <-
   function(tSet,
            mDataType,
-           cell.lines,
-           drugs,
-           features,
-           duration,
+           cell_lines = NULL, # Defaults get set in paramMissingHandler call
+           drugs = NULL,
+           features = NULL,
+           duration = NULL,
            dose = c("Control", "Low", "Middle", "High"),
            summary.stat = c("mean", "median", "first", "last"),
            fill.missing = TRUE,
@@ -66,15 +66,29 @@ summarizeMolecularProfiles <-
 
     ##### CHECKING INPUT VALIDITY #####
 
-    ## TODO:: Implement paramWarningHandler()
-    #paramWarningHandler()
+    ## MISSING VALUE HANDLING FOR PARAMETERS
+    # Get named list of defualt values for missing parameters
+    argDefaultList <-
+      paramMissingHandler(
+        funName = "summarizeMolecularProfiles", tSet = tSet,
+        mDataType = mDataType, cell_lines = cell_lines, drugs = drugs,
+        features = features, duration = duration
+      )
+
+    # Assign any missing parameter default values to function environment
+    if (length(argDefaultList) > 0) {
+      for (idx in seq_along(argDefaultList)) {
+        assign(names(argDefaultList)[idx], argDefaultList[[idx]])
+      }
+    }
 
     ## TODO:: Standardized parameter names across all function
     ## ERROR HANDLING FOR PARAMETERS
-    paramErrorChecker("summarizeMolecularProfiles", tSet=tSet,
-                      mDataType=mDataType, cell.lines=cell.lines, drugs=drugs,
-                      features=features, duration=duration, dose=dose,
-                      summary.stat=summary.stat
+    paramErrorChecker(
+      "summarizeMolecularProfiles", tSet = tSet,
+      mDataType = mDataType, cell_lines = cell_lines, drugs = drugs,
+      features = features, duration = duration, dose = dose,
+      summary.stat = summary.stat
     )
 
     ##### FUNCTION LOGIC BEGINS #####
@@ -83,7 +97,7 @@ summarizeMolecularProfiles <-
     pp <- ToxicoGx::phenoInfo(tSet, mDataType) #phenoData of the tSet
     ff <- ToxicoGx::featureInfo(tSet, mDataType)[features,,drop = F]
 
-    unique.cells <- unique(cell.lines) #unique cell types (row names of the result)
+    unique.cells <- unique(cell_lines) #unique cell types (row names of the result)
     #subset phenoData to include only the experiments requested
     pp2 <- pp[(pp[,"cellid"] %in% unique.cells & pp[,"drugid"] %in% drugs
                & pp[,"duration"] %in% duration & pp[,"dose_level"] %in% dose), , drop = F] #only the phenoData that is relevant to the request input
@@ -98,7 +112,7 @@ summarizeMolecularProfiles <-
 
     exp.list <- list()
     cnt <- 0
-    blank <- ddt[,1,drop=F]
+    blank <- ddt[,1,drop = F]
 
     #lapply(drugs, function(drug){
     for (drug in drugs) {
@@ -126,7 +140,7 @@ summarizeMolecularProfiles <-
           )
           ppr <- apply(pp3[, , drop=FALSE], 2, function (x) {
             x <- paste(unique(as.character(x[!is.na(x)])), collapse="/")
-            return (x)
+            return(x)
           })
           ppr <- as.data.frame(t(ppr))
           ppr[!is.na(ppr) & ppr == ""] <- NA
@@ -137,7 +151,7 @@ summarizeMolecularProfiles <-
           ddt <- cbind(ddt,blank)
           # ppt <- rbind(ppt,pp3[NA,])
         }
-        else { #no replicates
+        else{#no replicates
           ddt <- cbind(ddt,dd3)
           ppt <- rbind(ppt,pp3)
         }
@@ -159,10 +173,10 @@ summarizeMolecularProfiles <-
         if (verbose == TRUE) {
           message(j)
         }
-        pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop=F], 2, function (x) {
-          x <- paste(unique(as.character(x[!is.na(x)])), collapse="///")
+        pp4 <- apply(ppt[ppt[,"dose_level"] == i & ppt[,"duration"] == j,,drop = F], 2, function(x) {
+          x <- paste(unique(as.character(x[!is.na(x)])), collapse = "///")
           #if (is.na(x)){x <- paste("Exp ",,sep="")}
-          return (x)
+          return(x)
         })
         pp4 <- as.data.frame(t(pp4))
         pp4[!is.na(pp4) & pp4 == ""] <- NA

@@ -29,7 +29,6 @@
 #' methods. For a much more detailed instruction on creating ToxicoSets, please
 #' see the "CreatingToxicoSet" vignette.
 #'
-#'
 #' @param name A \code{character} string detailing the name of the dataset
 #' @param molecularProfiles A \code{list} of ExpressionSet objects containing
 #'   molecular profiles
@@ -67,10 +66,10 @@ ToxicoSet <-  function(name,
                        cell=data.frame(),
                        drug=data.frame(),
                        sensitivityInfo=data.frame(),
-                       sensitivityRaw=array(dim=c(0,0,0)),
+                       sensitivityRaw=array(dim = c(0,0,0)),
                        sensitivityProfiles=matrix(),
-                       sensitivityN=matrix(nrow=0, ncol=0),
-                       perturbationN=array(NA, dim=c(0,0,0)),
+                       sensitivityN=matrix(nrow = 0, ncol=0),
+                       perturbationN=array(NA, dim = c(0,0,0)),
                        curationDrug=data.frame(),
                        curationCell = data.frame(),
                        curationTissue = data.frame(),
@@ -200,8 +199,8 @@ setMethod(cellInfo,
 #' @describeIn ToxicoSet Update the cell line annotations
 #'
 #' @export
-setReplaceMethod("cellInfo", signature = signature(object = "ToxicoSet",value = "data.frame"), function(object, value){
-  if(is.null(rownames(value))){
+setReplaceMethod("cellInfo", signature = signature(object = "ToxicoSet", value = "data.frame"), function(object, value){
+  if (is.null(rownames(value))){
     stop("Please provide the cell_id as rownames for the cell line annotations")
   }
   object <- callNextMethod(object, value)
@@ -242,7 +241,7 @@ setMethod(drugInfo, "ToxicoSet", function(tSet){
 setGeneric("drugInfo<-", function(object, value) standardGeneric("drugInfo<-"))
 #' @describeIn ToxicoSet Update the drug annotations
 #' @export
-setReplaceMethod("drugInfo", signature = signature(object="ToxicoSet",value="data.frame"), function(object, value){
+setReplaceMethod("drugInfo", signature = signature(object = "ToxicoSet",value = "data.frame"), function(object, value){
   object@drug <- value
   object
 })
@@ -255,8 +254,10 @@ setReplaceMethod("drugInfo", signature = signature(object="ToxicoSet",value="dat
 #' data(TGGATESsmall)
 #' phenoInfo <- phenoInfo(TGGATESsmall, mDataType="rna")
 #'
-#' @inheritParams cellInfo
-#' @inheritParams phenoInfo
+#' @param tSet A \code{ToxicoSet} object #'
+#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
 #'
 #' @return a \code{data.frame} with the experiment info
 #'
@@ -280,7 +281,8 @@ setMethod("phenoInfo",
 #' data(TGGATESsmall)
 #' phenoInfo(TGGATESsmall, mDataType="rna") <- phenoInfo(TGGATESsmall, mDataType="rna")
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object.
+#' @param value A \code{data.frame} of replacement values.
 #' @param mDataType A \code{character} with the type of molecular data to return/update
 #'
 #' @return The updated \code{ToxicoSet}
@@ -304,7 +306,9 @@ setReplaceMethod("phenoInfo", signature = signature(object="ToxicoSet", mDataTyp
 #' data(TGGATESsmall)
 #' TGGATES_mProf <- molecularProfiles(TGGATESsmall, "rna")[1:10,]
 #'
-#' @inheritParams phenoInfo
+#' @param object A \code{ToxicoSet} object.
+#' @param value A \code{character} vector of replacement values.
+#' @param mDataType \code{character} A string specifying the type of molecular #'   data to list the phenotype information for.
 #'
 #' @describeIn ToxicoSet Return the given type of molecular data from the ToxicoSet
 #'
@@ -324,7 +328,10 @@ setMethod("molecularProfiles",
 #' @examples
 #' molecularProfiles(TGGATESsmall, "rna") <- molecularProfiles(TGGATESsmall, "rna")
 #'
-#' @inheritParams phenoInfo<-
+#' @param object A \code{ToxicoSet} object.
+#' @param value A \code{matrix} of replacement values.
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
 #'
 #' @return Updated \code{ToxicoSet}
 #'
@@ -343,7 +350,10 @@ setReplaceMethod("molecularProfiles", signature = signature(object = "ToxicoSet"
 #' data(TGGATESsmall)
 #' featureInfo <- featureInfo(TGGATESsmall, "rna")[1:10,]
 #'
-#' @inheritParams phenoInfo
+#' @param tSet A \code{ToxicoSet} object #'
+#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
 #'
 #' @describeIn ToxicoSet Return the feature info for the given molecular data
 #'
@@ -364,7 +374,12 @@ setMethod("featureInfo",
 #' data(TGGATESsmall)
 #' featureInfo(TGGATESsmall, "rna") <- featureInfo(TGGATESsmall, "rna")
 #'
-#' @inheritParams phenoInfo<-
+#'
+#' @param object A \code{ToxicoSet} object
+#' @param value A \code{data.frame} of replacement values
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data
+#'
 #'
 #' @return Updated \code{ToxicoSet}
 #'
@@ -387,7 +402,8 @@ setReplaceMethod("featureInfo", signature = signature(object="ToxicoSet", mDataT
 #' @examples
 #' sensInf<- sensitivityInfo(TGGATESsmall)[1:10,]
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return a \code{data.frame} with the experiment info
 #'
@@ -411,7 +427,8 @@ setMethod(sensitivityInfo,
 #' data(TGGATESsmall)
 #' sensitivityInfo(TGGATESsmall) <- sensitivityInfo(TGGATESsmall)
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object
+#' @param value A \code{data.frame} of replacement values
 #'
 #' @return Updated \code{ToxicoSet}
 #'setGeneric("sensitivityInfo<-", function(object, value) standardGeneric("sensitivityInfo<-"))
@@ -435,7 +452,8 @@ setReplaceMethod("sensitivityInfo", signature = signature(object="ToxicoSet",val
 #' data(TGGATESsmall)
 #' sensProf <- sensitivityProfiles(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return a \code{data.frame} with the experiment info
 #'setGeneric("sensitivityProfiles", function(tSet) standardGeneric("sensitivityProfiles"))
@@ -458,7 +476,8 @@ setMethod(sensitivityProfiles,
 #' @examples
 #' sensitivityProfiles(TGGATESsmall) <- sensitivityProfiles(TGGATESsmall)
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object
+#' @param value A \code{data.frame} of replacement values
 #'
 #' @return Updated \code{ToxicoSet}
 #'setGeneric("sensitivityProfiles<-", function(object, value) standardGeneric("sensitivityProfiles<-"))
@@ -487,7 +506,8 @@ setReplaceMethod("sensitivityProfiles", signature = signature(object="ToxicoSet"
 #' @examples
 #' sensitivityMeasures(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return A \code{character} vector of all the available sensitivity measures
 #'
@@ -511,7 +531,9 @@ setMethod(sensitivityMeasures,
 #' data(TGGATESsmall)
 #' drugName <- drugNames(TGGATESsmall)[1:10]
 #'
-#' @inheritParams drugInfo
+#' @param tSet A \code{ToxicoSet} object from which to retrieve the included
+#'   drug names
+#'
 #' @return A vector of the drug names used in the ToxicoSet
 setGeneric("drugNames", function(tSet) standardGeneric("drugNames"))
 #' @describeIn ToxicoSet Return the names of the drugs used in the ToxicoSet
@@ -529,7 +551,10 @@ setMethod(drugNames,
 #' @examples
 #' data(TGGATESsmall)
 #' drugNames(TGGATESsmall) <- drugNames(TGGATESsmall)
-#' @inheritParams drugInfo<-
+#'
+#' @param object A \code{ToxicoSet} object to modify
+#' @param value A \code{character} vector of replacement drug names
+#'
 #' @return Updated \code{ToxicoSet}
 setGeneric("drugNames<-", function(object, value) standardGeneric("drugNames<-"))
 #' @describeIn ToxicoSet Update the drug names used in the dataset
@@ -546,7 +571,8 @@ setReplaceMethod("drugNames", signature = signature(object="ToxicoSet",value="ch
 #' @examples
 #' cellNames(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return A vector of the cell names used in the ToxicoSet
 # setGeneric("cellNames", function(tSet) standardGeneric("cellNames"))
@@ -570,7 +596,8 @@ setMethod("cellNames",
 #' data(TGGATESsmall)
 #' cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 #'
-#' @inheritParams drugInfo<-
+#' @param object A \code{ToxicoSet} object to modify
+#' @param value A \code{character} of replacement cell line names
 #'
 #' @return Updated \code{ToxicoSet}
 #'
@@ -591,7 +618,10 @@ setReplaceMethod("cellNames", signature = signature(object="ToxicoSet",value="ch
 #' @examples
 #' fNames(TGGATESsmall, "rna")[1:10]
 #'
-#' @inheritParams phenoInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
+#' @param mDataType \code{character} A string specifying the type of molecular
+#'   data to list the phenotype information for.
 #'
 #' @return A \code{character} vector of the feature names
 #'
@@ -615,7 +645,7 @@ setMethod("fNames",
 # data(TGGATESsmall)
 # cellNames(TGGATESsmall) <- cellNames(TGGATESsmall)
 #
-# @inheritParams phenoInfo<-
+# @param mDataType \code{character} A string specifying the type of molecular #'   data to list the phenotype information for.
 # @param value A \code{character} vector of the new feature names
 # @return Updated \code{ToxicoSet}
 # @describeIn ToxicoSet Update the feature names used in the dataset
@@ -631,7 +661,8 @@ setMethod("fNames",
 #' @examples
 #' dateCreated(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return The date the ToxicoSet was created
 #'
@@ -655,7 +686,8 @@ setMethod(dateCreated,
 #' tSetName <- cSetName
 #' tSetName(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return The name of the ToxicoSet
 #'
@@ -678,7 +710,8 @@ tSetName <- cSetName
 #' @examples
 #' pertNumber(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return A 3D \code{array} with the number of perturbation experiments per radiation type and cell line, and data type
 # setGeneric("pertNumber", function(tSet) standardGeneric("pertNumber"))
@@ -703,7 +736,8 @@ setMethod(pertNumber,
 #' @examples
 #' sensNumber(TGGATESsmall)
 #'
-#' @inheritParams cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return A \code{data.frame} with the number of sensitivity experiments per drug and cell line
 #'
@@ -726,7 +760,8 @@ setMethod(sensNumber,
 #' @examples
 #' pertNumber(TGGATESsmall) <- pertNumber(TGGATESsmall)
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object to modify
+#' @param value An \code{array} of replacement values
 ## TODO:: Remove duplicate param names from CoreGx; this documentation is incorrect as is
 # @param value A new 3D \code{array} with the number of perturbation experiments per drug and cell line, and data type
 #'
@@ -751,7 +786,8 @@ setReplaceMethod('pertNumber', signature = signature(object="ToxicoSet",value="a
 #' @examples
 #' sensNumber(TGGATESsmall) <- sensNumber(TGGATESsmall)
 #'
-#' @inheritParams cellInfo<-
+#' @param object A \code{ToxicoSet} object to modify
+#' @param value A \code{matrix} of replacement values
 #'
 #' @return The updated \code{ToxicoSet}
 #'
@@ -769,7 +805,7 @@ setReplaceMethod('sensNumber', signature = signature(object="ToxicoSet",value="m
 
 #' Show a ToxicoSet
 #'
-#' @inheritParams drugInfo<-
+#' @param object A \code{ToxicoSet} object to print a summary for
 #'
 #' @examples
 #' TGGATESsmall
@@ -801,7 +837,8 @@ setMethod("show", signature=signature(object="ToxicoSet"),
 #' @examples
 #' mDataNames(TGGATESsmall)
 #'
-#' @inheritParams CoreGx::cellInfo
+#' @param tSet A \code{ToxicoSet} object
+#' @param cSet Parameter name for parent method inherited from CoreGx
 #'
 #' @return Vector of names of the molecular data types
 # Imports generic
@@ -871,26 +908,32 @@ setMethod("dim", signature=signature(x="ToxicoSet"), function(x){
 #'   cells = TGGATESCells[1], duration = "2")
 #'
 #' @param tSet A \code{ToxicoSet} to be subsetted
-#' @param cells A list or vector of cell names as used in the dataset to which
+#' @param cell_lines A list or vector of cell names as used in the dataset to which
 #'   the object will be subsetted. If left blank, then all cells will be left in
 #'   the dataset.
 #' @param drugs A list or vector of drug names as used in the dataset to which
 #'   the object will be subsetted. If left blank, then all drugs will be left in
 #'   the dataset.
-#' @param features A list or vector of feature names as used int he dataset from
+#' @param features A list or vector of feature names as used in the dataset from
 #'   which the object will be subsetted. If left blank that all features will
 #'   be left in.
 #' @param molecular.data.cells A list or vector of cell names to keep in the
 #'   molecular data
-#   the controls be kept in the dataset? Defaults to true.
 #' @param duration A \code{list} or \code{vector} of the experimental durations
-#'   to include in the subset as strings
+#'   to include in the subset as strings. Defaults to all durations if parameter
+#'   is not specified.
 #' @param ... Other arguments passed by other function within the package
 #' @return A ToxicoSet with only the selected drugs and cells
 #' @importFrom CoreGx unionList
 #' @export
-subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, duration=NULL, features=NULL, ...) {
-  drop=FALSE
+## TODO:: Include dose parmater to subset on
+subsetTo <- function(tSet, cell_lines = NULL,
+                     drugs=NULL,
+                     molecular.data.cells=NULL,
+                     duration=NULL, features=NULL, ...
+                     ) {
+  ## TODO:: Remove this or add it to the function parameters?
+  drop = FALSE
 
   ####
   # PARSING ARGUMENTS
@@ -908,35 +951,30 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   }else {
     exps <- NULL
   }
+
   if ("dose" %in% names(adArgs)) {
     ## TODO:: Add subsetting on dose
     stop("Due to the structure of tSets, subsetting on dose can only be done on specific slots - not on the entire tSet")
   }
 
-  if (!is.null(cells)){
-    ## TODO:: Test this function in a tSet with more than one cell type!
-    cells <- unique(cells)
-  }
-
-  if (!is.null(drugs)) {
-    drugs <- unique(drugs)
-  }
-
-  if (!is.null(molecular.data.cells)) {
-    molecular.data.cells <- unique(molecular.data.cells)
-  }
-
-  if (!is.null(duration)) {
-    duration <- unique(duration)
-    if (is.numeric(duration)) {
-      warning("Duration values should be character, not numeric! Converting for you...")
-      duration <- vapply(duration, function(x) { as.character(x) }, character(1))
+  ## MISSING VALUE HANDLING FOR PARAMETERS
+  # Get named list of defualt values for missing parameters
+  argDefaultList <-
+    paramMissingHandler(funName = "subsetTo", tSet = tSet,
+                        drugs = drugs, cell_lines = cell_lines, features = features,
+                        duration = duration)
+  # Assign any missing parameter default values to function environment
+  if (length(argDefaultList) > 0) {
+    for (idx in seq_along(argDefaultList)) {
+      assign(names(argDefaultList)[idx], argDefaultList[[idx]])
     }
   }
 
-  if (!is.null(features)) {
-    features <- unique(features)
-  }
+  # ERROR HANDLING FOR PARAMETERS
+  paramErrorChecker(funName = "subsetTo", tSet = tSet,
+                    cell_lines = cell_lines,
+                    drugs = drugs, features = features,
+                    duration = duration)
 
   ######
   # SUBSETTING MOLECULAR PROFILES SLOT
@@ -945,7 +983,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 
   ### the function missing does not work as expected in the context below, because the arguments are passed to the anonymous
   ### function in lapply, so it does not recognize them as missing
-  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cells, drugs, molecular.data.cells, duration, features){
+  tSet@molecularProfiles <- lapply(tSet@molecularProfiles, function(eset, cell_lines, drugs, molecular.data.cells, duration, features){
 
     if (!is.null(features)) {
       eset <- eset[which(Biobase::featureNames(eset) %in% features), ]
@@ -953,29 +991,29 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
 
     molecular.data.type <- ifelse(length(grep("rna", Biobase::annotation(eset)) > 0), "rna", Biobase::annotation(eset))
     if (length(grep(molecular.data.type, names(molecular.data.cells))) > 0) {
-      cells <- molecular.data.cells[[molecular.data.type]]
+      cell_lines <- molecular.data.cells[[molecular.data.type]]
     }
     column_indices <- NULL
 
-    if (length(cells) == 0 && length(drugs) == 0) {
+    if (length(cell_lines) == 0 && length(drugs) == 0) {
       column_indices <- seq_len(ncol(eset))
     }
-    if (length(cells) == 0 && tSet@datasetType == "sensitivity") {
+    if (length(cell_lines) == 0 && tSet@datasetType == "sensitivity") {
       column_indices <- seq_len(ncol(eset))
     }
 
-    # Selecting indices which match the cells arguemnt
+    # Selecting indices which match the cells argument
     cell_line_index <- NULL
-    if (length(cells) != 0) {
-      if (!all(cells %in% cellNames(tSet))) {
+    if (length(cell_lines) != 0) {
+      if (!all(cell_lines %in% cellNames(tSet))) {
         stop("Some of the cell names passed to function did not match to names in the PharmacoSet. Please ensure you are using cell names as returned by the cellNames function")
       }
-      cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cells)
+      cell_line_index <- which(Biobase::pData(eset)[["cellid"]] %in% cell_lines)
     }
 
     # Selecting indexes which match drugs arguement
     drugs_index <- NULL
-    if (tSet@datasetType == "perturbation" || tSet@datasetType == "both"){
+    if (tSet@datasetType == "perturbation" || tSet@datasetType == "both") {
       if (length(drugs) != 0) {
         if (!all(drugs %in% drugNames(tSet))){
           stop("Some of the drug names passed to function did not match to names in the ToxicoSet Please ensure you are using drug names as returned by the drugNames function")
@@ -1003,7 +1041,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     if (!is.null(duration)){
       if (all(!(duration %in% unique(Biobase::pData(eset[,column_indices])$duration)))) {
         # Error when other parameters are passed in
-        if ( !is.null(cells) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if ( !is.null(cell_lines) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             "There are no molecular profiles with duration of ",
             duration, " in the tSet with the selected parameters."
@@ -1025,7 +1063,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     eset <- eset[row_indices, column_indices]
     return(eset)
 
-  }, cells = cells, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration, features = features)
+  }, cell_lines = cell_lines, drugs = drugs, molecular.data.cells = molecular.data.cells, duration = duration, features = features)
 
 
   ######
@@ -1047,18 +1085,18 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   # Logic if drug or cell parameters are passed to subsetTo
   else if (
     (tSet@datasetType == "sensitivity" | tSet@datasetType == "both") &
-    (length(drugs) != 0 | length(cells) != 0 | !is.null(duration) )
+    (length(drugs) != 0 | length(cell_lines) != 0 | !is.null(duration) )
   ) {
 
     drugs_index <- which(sensitivityInfo(tSet)[, "drugid"] %in% drugs)
-    cell_line_index <- which(sensitivityInfo(tSet)[,"cellid"] %in% cells)
+    cell_line_index <- which(sensitivityInfo(tSet)[,"cellid"] %in% cell_lines)
     if (length(drugs_index) !=0 & length(cell_line_index) !=0 ) {
       if (length(intersect(drugs_index, cell_line_index)) == 0) {
         stop("This Drug - Cell Line combination was not tested together.")
       }
       row_indices <- intersect(drugs_index, cell_line_index)
     } else {
-      if(length(drugs_index)!=0 & length(cells)==0) {
+      if(length(drugs_index)!=0 & length(cell_lines)==0) {
         row_indices <- drugs_index
       } else {
         if(length(cell_line_index)!=0 & length(drugs)==0){
@@ -1073,7 +1111,7 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
     if(!is.null(duration)){
       if(all(!(duration %in% unique(sensitivityInfo(tSet)[row_indices,]$duration_h)))) {
         # Error when other parameters are passed in
-        if(!is.null(cells) | !is.null(drugs) | !is.null(molecular.data.cells)) {
+        if(!is.null(cell_lines) | !is.null(drugs) | !is.null(molecular.data.cells)) {
           stop(paste0(
             ## TODO:: Is sample the correct way to refer to one treatment/duration combination in TGx experiments?
             "There are no samples with duration of ",
@@ -1094,8 +1132,8 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
       lapply(sensItemNames, function(sensItemName, drop){
         if (sensItemName == "n") {
           sensItem <- tSet@sensitivity[[sensItemName]]
-          if (!is.null(cells)) {
-            sensItem[which(rownames(sensItem) %in% cells), which(colnames(sensItem) %in% drugs), drop = drop]
+          if (!is.null(cell_lines)) {
+            sensItem[which(rownames(sensItem) %in% cell_lines), which(colnames(sensItem) %in% drugs), drop = drop]
           } else {
             sensItem[ , which(colnames(sensItem) %in% drugs), drop = drop]
           }
@@ -1126,20 +1164,20 @@ subsetTo <- function(tSet, cells=NULL, drugs=NULL, molecular.data.cells=NULL, du
   #####
   # SUBSET CELLS SLOT
   #####
-  if (length(cells) == 0) {
-    cells <- union(cells, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
+  if (length(cell_lines) == 0) {
+    celll.lines <- union(cell_lines, na.omit(unionList(lapply(tSet@molecularProfiles, function(eSet){unique(Biobase::pData(eSet)[["cellid"]])}))))
     if (tSet@datasetType == "sensitivity" | tSet@datasetType == "both"){
-      cells <- union(cells, sensitivityInfo(tSet)[["cellid"]])
+      cell_lines <- union(cell_lines, sensitivityInfo(tSet)[["cellid"]])
     }
   }
   #####
   # ASSIGN SUBSETS BACK TO TOXICOSET OBJECT
   #####
   drugInfo(tSet) <- drugInfo(tSet)[drugs , , drop=drop]
-  cellInfo(tSet) <- cellInfo(tSet)[cells , , drop=drop]
+  cellInfo(tSet) <- cellInfo(tSet)[cell_lines , , drop=drop]
   tSet@curation$drug <- tSet@curation$drug[drugs , , drop=drop]
-  tSet@curation$cell <- tSet@curation$cell[cells , , drop=drop]
-  tSet@curation$tissue <- tSet@curation$tissue[cells , , drop=drop]
+  tSet@curation$cell <- tSet@curation$cell[cell_lines , , drop=drop]
+  tSet@curation$tissue <- tSet@curation$tissue[cell_lines , , drop=drop]
   return(tSet)
 }
 
@@ -1432,7 +1470,7 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 
   perturbation.info <- array(0, dim=c(length(celln), length(drugn), length(tSet@molecularProfiles)), dimnames=list(celln, drugn, names((tSet@molecularProfiles))))
 
-  for (i in 1:length(tSet@molecularProfiles)) {
+  for (i in seq_along(tSet@molecularProfiles)) {
     if (nrow(Biobase::pData(tSet@molecularProfiles[[i]])) > 0 && all(is.element(c("cellid", "drugid"), colnames(Biobase::pData(tSet@molecularProfiles[[i]]))))) {
       tt <- table(Biobase::pData(tSet@molecularProfiles[[i]])[ , "cellid"], Biobase::pData(tSet@molecularProfiles[[i]])[ , "drugid"])
       perturbation.info[rownames(tt), colnames(tt), names(tSet@molecularProfiles)[i]] <- tt
@@ -1462,14 +1500,14 @@ updateDrugId <- function(tSet, new.ids = vector("character")){
 #' @importFrom grDevices dev.off pdf
 
 checkTSetStructure <-
-  function(tSet, plotDist=FALSE, result.dir=tempdir()) {
-    if ( !file.exists(result.dir) & plotDist) { dir.create(result.dir, showWarnings = FALSE, recursive = TRUE) }
-    for (i in 1:length(tSet@molecularProfiles)) {
+  function(tSet, plotDist=FALSE, result.dir=".") {
+    if(!file.exists(result.dir) & plotDist) { dir.create(result.dir, showWarnings=FALSE, recursive=TRUE) }
+    for( i in 1:length(tSet@molecularProfiles)) {
       profile <- tSet@molecularProfiles[[i]]
       nn <- names(tSet@molecularProfiles)[i]
-      if ((Biobase::annotation(profile) == "rna" | Biobase::annotation(profile) == "rnaseq") & plotDist)
+      if((Biobase::annotation(profile) == "rna" | Biobase::annotation(profile) == "rnaseq") & plotDist)
       {
-        pdf(file = file.path(result.dir, sprintf("%s.pdf", nn)))
+        pdf(file=file.path(result.dir, sprintf("%s.pdf", nn)))
         hist(Biobase::exprs(profile), breaks = 100)
         dev.off()
       }
@@ -1477,97 +1515,97 @@ checkTSetStructure <-
       warning(ifelse(nrow(Biobase::pData(profile)) != ncol(Biobase::exprs(profile)), sprintf("%s: number of cell lines in pData is different from expression slots", nn), sprintf("%s: pData dimension is OK", nn)))
       warning(ifelse("cellid" %in% colnames(Biobase::pData(profile)), "", sprintf("%s: cellid does not exist in pData columns", nn)))
       warning(ifelse("batchid" %in% colnames(Biobase::pData(profile)), "", sprintf("%s: batchid does not exist in pData columns", nn)))
-      if (Biobase::annotation(profile) == "rna" | Biobase::annotation(profile) == "rnaseq")
+      if(Biobase::annotation(profile) == "rna" | Biobase::annotation(profile) == "rnaseq")
       {
         warning(ifelse("BEST" %in% colnames(Biobase::fData(profile)), "BEST is OK", sprintf("%s: BEST does not exist in fData columns", nn)))
         warning(ifelse("Symbol" %in% colnames(Biobase::fData(profile)), "Symbol is OK", sprintf("%s: Symbol does not exist in fData columns", nn)))
       }
-      if ("cellid" %in% colnames(Biobase::pData(profile))) {
-        if (!all(Biobase::pData(profile)[,"cellid"] %in% rownames(tSet@cell))) {
+      if("cellid" %in% colnames(Biobase::pData(profile))) {
+        if(!all(Biobase::pData(profile)[,"cellid"] %in% rownames(tSet@cell))) {
           warning(sprintf("%s: not all the cell lines in this profile are in cell lines slot", nn))
         }
       }else {
         warning(sprintf("%s: cellid does not exist in pData", nn))
       }
     }
-    if ("tissueid" %in% colnames(tSet@cell)) {
-      if ("unique.tissueid" %in% colnames(tSet@curation$tissue))
+    if("tissueid" %in% colnames(tSet@cell)) {
+      if("unique.tissueid" %in% colnames(tSet@curation$tissue))
       {
-        if (length(intersect(rownames(tSet@curation$tissue), rownames(tSet@cell))) != nrow(tSet@cell)) {
+        if(length(intersect(rownames(tSet@curation$tissue), rownames(tSet@cell))) != nrow(tSet@cell)) {
           message("rownames of curation tissue slot should be the same as cell slot (curated cell ids)")
         } else{
-          if (length(intersect(tSet@cell$tissueid, tSet@curation$tissue$unique.tissueid)) != length(table(tSet@cell$tissueid))){
+          if(length(intersect(tSet@cell$tissueid, tSet@curation$tissue$unique.tissueid)) != length(table(tSet@cell$tissueid))){
             message("tissueid should be the same as unique tissue id from tissue curation slot")
           }
         }
       } else {
         message("unique.tissueid which is curated tissue id across data set should be a column of tissue curation slot")
       }
-      if (any(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "", na.rm = TRUE)) {
+      if(any(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "", na.rm = TRUE)) {
         message(sprintf("There is no tissue type for this cell line(s): %s", paste(rownames(tSet@cell)[which(is.na(tSet@cell[,"tissueid"]) | tSet@cell[,"tissueid"] == "")], collapse = " ")))
       }
     } else {
       warning("tissueid does not exist in cell slot")
     }
 
-    if ("unique.cellid" %in% colnames(tSet@curation$cell)) {
-      if (length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
-        message("rownames of cell slot should be curated cell ids")
+    if("unique.cellid" %in% colnames(tSet@curation$cell)) {
+      if(length(intersect(tSet@curation$cell$unique.cellid, rownames(tSet@cell))) != nrow(tSet@cell)) {
+        print("rownames of cell slot should be curated cell ids")
       }
     } else {
-      message("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
+      print("unique.cellid which is curated cell id across data set should be a column of cell curation slot")
     }
 
-    if (length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
-      message("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
+    if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
+      print("rownames of curation cell slot should be the same as cell slot (curated cell ids)")
     }
 
-    if ("unique.drugid" %in% colnames(tSet@curation$drug)) {
-      if (length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
-        message("rownames of drug slot should be curated drug ids")
+    if("unique.drugid" %in% colnames(tSet@curation$drug)) {
+      if(length(intersect(tSet@curation$drug$unique.drugid, rownames(tSet@drug))) != nrow(tSet@drug)) {
+        print("rownames of drug slot should be curated drug ids")
       }
     } else {
-      message("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
+      print("unique.drugid which is curated drug id across data set should be a column of drug curation slot")
     }
 
-    if (length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
-      message("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
+    if(length(intersect(rownames(tSet@curation$cell), rownames(tSet@cell))) != nrow(tSet@cell)) {
+      print("rownames of curation drug slot should be the same as drug slot (curated drug ids)")
     }
 
-    if (class(tSet@cell) != "data.frame") {
+    if(class(tSet@cell) != "data.frame") {
       warning("cell slot class type should be dataframe")
     }
-    if (class(tSet@drug) != "data.frame") {
+    if(class(tSet@drug) != "data.frame") {
       warning("drug slot class type should be dataframe")
     }
-    if (tSet@datasetType %in% c("sensitivity", "both"))
+    if(tSet@datasetType %in% c("sensitivity", "both"))
     {
-      if (class(tSet@sensitivity$info) != "data.frame") {
+      if(class(tSet@sensitivity$info) != "data.frame") {
         warning("sensitivity info slot class type should be dataframe")
       }
-      if ("cellid" %in% colnames(tSet@sensitivity$info)) {
-        if (!all(tSet@sensitivity$info[,"cellid"] %in% rownames(tSet@cell))) {
+      if("cellid" %in% colnames(tSet@sensitivity$info)) {
+        if(!all(tSet@sensitivity$info[,"cellid"] %in% rownames(tSet@cell))) {
           warning("not all the cell lines in sensitivity data are in cell slot")
         }
       }else {
         warning("cellid does not exist in sensitivity info")
       }
-      if ("drugid" %in% colnames(tSet@sensitivity$info)) {
+      if("drugid" %in% colnames(tSet@sensitivity$info)) {
         drug.ids <- unique(tSet@sensitivity$info[,"drugid"])
-        drug.ids <- drug.ids[grep("///", drug.ids, invert = TRUE)]
-        if (!all(drug.ids %in% rownames(tSet@drug))) {
-          message("not all the drugs in sensitivity data are in drug slot")
+        drug.ids <- drug.ids[grep("///",drug.ids, invert=TRUE)]
+        if(!all(drug.ids %in% rownames(tSet@drug))) {
+          print("not all the drugs in sensitivity data are in drug slot")
         }
       }else {
         warning("drugid does not exist in sensitivity info")
       }
 
-      if (any(!is.na(tSet@sensitivity$raw))) {
-        if (!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(tSet@sensitivity$info))) {
+      if(any(!is.na(tSet@sensitivity$raw))) {
+        if(!all(dimnames(tSet@sensitivity$raw)[[1]] %in% rownames(tSet@sensitivity$info))) {
           warning("For some experiments there is raw sensitivity data but no experimet information in sensitivity info")
         }
       }
-      if (!all(rownames(tSet@sensitivity$profiles) %in% rownames(tSet@sensitivity$info))) {
+      if(!all(rownames(tSet@sensitivity$profiles) %in% rownames(tSet@sensitivity$info))) {
         warning("For some experiments there is sensitivity profiles but no experimet information in sensitivity info")
       }
     }

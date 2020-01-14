@@ -24,9 +24,9 @@ rankGeneDrugPerturbation <-
 
     if (nthread != 1) {
       availcore <- parallel::detectCores()
-      if (nthread < 1 || nthread > availcore) {
+      if (missing(nthread) || nthread < 1 || nthread > availcore) {
         # print(paste("available cores",availcore,"allocated"))
-        nthread <- (availcore - 1)
+        nthread <- availcore
       }
       else{
         # print(paste("all",nthread,"cores have been allocated"))
@@ -51,6 +51,8 @@ rankGeneDrugPerturbation <-
       names(res) <- list("all"=type)
       return(res)
     }
+
+    res.type <- NULL
 
     ## build input matrix
     inpumat <- NULL
@@ -91,7 +93,7 @@ rankGeneDrugPerturbation <-
 
     res <- NULL
     utype <- sort(unique(as.character(inpumat[ , "type"])))
-    ltype <- list("all" = utype)
+    ltype <- list("all"=utype)
 
     if(single.type) {
       ltype <- c(ltype, as.list(utype))
@@ -113,12 +115,12 @@ rankGeneDrugPerturbation <-
         ## test perturbation vs control
         if(nthread > 1) {
           ## parallel threads
-          splitix <- parallel::splitIndices(nx=ncol(data), ncl = nthread)
+          splitix <- parallel::splitIndices(nx=ncol(data), ncl=nthread)
           splitix <- splitix[sapply(splitix, length) > 0]
           mcres <- parallel::mclapply(splitix, function(x, data, inpumat) {
             res <- t(apply(data[rownames(inpumat), x, drop=FALSE], 2, ToxicoGx::geneDrugPerturbation, concentration=inpumat[ , "concentration"], type=inpumat[ , "type"], batch=inpumat[ , "batch"], duration=inpumat[,"duration"]))
             return(res)
-          }, data = data, inpumat = inpumat2, mc.cores = nthread)
+          }, data=data, inpumat=inpumat2)
           rest <- do.call(rbind, mcres)
         } else {
           rest <- t(apply(data[rownames(inpumat2), , drop=FALSE], 2, ToxicoGx::geneDrugPerturbation, concentration=inpumat2[ , "concentration"], type=inpumat2[ , "type"], batch=inpumat2[ , "batch"], duration=inpumat2[,"duration"]))
