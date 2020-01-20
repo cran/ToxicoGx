@@ -1,4 +1,4 @@
-## ----setup, include=FALSE, cache=FALSE, message = FALSE-----------------------
+## ----setup, include = FALSE, cache = FALSE, message = FALSE-------------------
 
 library("knitr")
 
@@ -16,15 +16,14 @@ opts_chunk$set(cache = 3, cache.path = "output/cache/")
 opts_chunk$set(fig.path = "output/figures/")
 
 
-
-## ---- message = FALSE, results = 'hide'---------------------------------------
-devtools::install_github("bhklab/ToxicoGx")
+## ---- eval = FALSE, message = FALSE, results = 'hide'-------------------------
+#  install.packages("ToxicoGx")
 
 ## ---- message = FALSE, fig.width = 8, fig.height = 3--------------------------
 library(PharmacoGx)
 library(ToxicoGx)
 library(ggplot2)
-library(tibble)
+
 # Load the tset 
 data(TGGATESsmall)
 ToxicoGx::drugGeneResponseCurve(TGGATESsmall, 
@@ -43,7 +42,7 @@ knitr::include_graphics('CS1_published.png')
 
 ## ---- results = 'asis'--------------------------------------------------------
 library(xtable)
-data("TGGATESsmall")
+#ata("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
 drug.perturbation <- ToxicoGx::drugPerturbationSig(tSet = TGGATESsmall,
                                          mDataType = "rna",
@@ -59,7 +58,8 @@ res <- apply(drug.perturbation[,,c("tstat", "fdr")],
                return(PharmacoGx::connectivityScore(x = x,
                                         y = HCC[,2,drop = FALSE],
                                         method = "fgsea", nperm = 100))
-             }, HCC = HCC_sig)
+             },
+             HCC = HCC_sig[1:199,])
 rownames(res) <- c("Connectivity", "P Value")
 res <- t(res)
 res <-  cbind(res,"FDR" = p.adjust(res[,2], method = "fdr"))

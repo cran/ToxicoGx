@@ -1,8 +1,8 @@
 Package: ToxicoGx
 Type: Package
 Title: Analysis of Large-Scale Toxico-Genomic Data
-Version: 0.1.0
-Date: 2020-01-10
+Version: 0.1.1
+Date: 2020-01-15
 Authors@R: c(
   person("Sisira","Nair", email = "sisira.nair@uhnresearch.ca",
     role = c("aut")),
@@ -34,10 +34,10 @@ Imports: SummarizedExperiment, Biobase, RColorBrewer, ggplot2,
         methods, reshape2, tidyr, scales
 RoxygenNote: 7.0.2
 VignetteBuilder: knitr
-Suggests: testthat (>= 2.1.0), rmarkdown, knitr, knitcitations,
-        tinytex, devtools, PharmacoGx, xtable
+Suggests: testthat (>= 2.1.0), rmarkdown, knitr, tinytex,
+        knitcitations, devtools, PharmacoGx, xtable
 NeedsCompilation: no
-Packaged: 2020-01-14 21:55:31 UTC; ceeles
+Packaged: 2020-01-20 15:40:18 UTC; ceeles
 Author: Sisira Nair [aut],
   Esther Yoo [aut],
   Christopher Eeles [aut],
@@ -47,4 +47,4 @@ Author: Sisira Nair [aut],
   Benjamin Haibe-Kains [aut, cre]
 Maintainer: Benjamin Haibe-Kains <benjamin.haibe.kains@utoronto.ca>
 Repository: CRAN
-Date/Publication: 2020-01-14 22:50:02 UTC
+Date/Publication: 2020-01-20 17:00:24 UTC

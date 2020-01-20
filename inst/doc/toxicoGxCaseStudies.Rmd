@@ -1,65 +1,57 @@
 ---
 title: 'ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis'
-
-author:  
-- name: Sisira Kadambat Nair
-  affilnum: 1
-- name: Esther Yoo
-  affilnum: 2
-- name: Christopher Eeles
-  affilnum: 3
-- name: Amy Tang
-  affilnum: 1
-- name: Nehme El-Hachem
-  affilnum: 1
-- name: Petr Smirnov
-  affilnum: '1, 2, 5'
-- name: Benjamin Haibe-Kains
-  affilnum: '1, 2, 3, 4, 5'
-
-affiliation:
+author:
 - affilnum: 1
-  affil: Princess Margaret Cancer Centre, University Health Network, Toronto, ON, Canada
+  name: Sisira Kadambat Nair
 - affilnum: 2
-  affil: Department of Medical Biophysics, University of Toronto, Toronto, ON, Canada
+  name: Esther Yoo
 - affilnum: 3
-  affil: Department of Computer Science, University of Toronto, Toronto, ON, Canada
-- affilnum: 4
-  affil: Ontario Institute of Cancer Research, Toronto, ON, Canada
-- affilnum: 5
-  affil: Vector Institute, Toronto, ON, Canada
-
-
+  name: Christopher Eeles
+- affilnum: 1
+  name: Amy Tang
+- affilnum: 1
+  name: Nehme El-Hachem
+- affilnum: 1, 2, 5
+  name: Petr Smirnov
+- affilnum: 1, 2, 3, 4, 5
+  name: Benjamin Haibe-Kains
+capsize: normalsize
 output:
-
   pdf_document:
     fig_caption: yes
-    fig_width: 7
     fig_height: 7
-    keep_tex: no
-    template: manuscript.latex
+    fig_width: 7
     includes:
       in_header: header.tex
-
+    keep_tex: no
+    template: manuscript.latex
   html_document: null
-  
   word_document: null
-
+csl: ecology.csl
 documentclass: article
-classoption: a4paper
-capsize: normalsize
 fontsize: 10pt
 geometry: margin=0.5in
+classoption: a4paper
 spacing: singlespacing
-csl: ecology.csl
-vignette: >
-  %\VignetteEngine{knitr::rmarkdown}
-  %\VignetteIndexEntry{ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis}
+affiliation:
+- affil: Princess Margaret Cancer Centre, University Health Network, Toronto, ON,
+    Canada
+  affilnum: 1
+- affil: Department of Medical Biophysics, University of Toronto, Toronto, ON, Canada
+  affilnum: 2
+- affil: Department of Computer Science, University of Toronto, Toronto, ON, Canada
+  affilnum: 3
+- affil: Ontario Institute of Cancer Research, Toronto, ON, Canada
+  affilnum: 4
+- affil: Vector Institute, Toronto, ON, Canada
+  affilnum: 5
+vignette: |
+  %\VignetteEngine{knitr::rmarkdown} %\VignetteIndexEntry{ToxicoGx: An R Platform for Integrated Toxicogenomics Data Analysis}
 ---
 
 
 
-```{r setup, include=FALSE, cache=FALSE, message = FALSE}
+```{r setup, include = FALSE, cache = FALSE, message = FALSE}
 
 library("knitr")
 
@@ -76,7 +68,6 @@ opts_chunk$set(cache = 3, cache.path = "output/cache/")
 ## Plots
 opts_chunk$set(fig.path = "output/figures/")
 
-
 ```
 
 ## Plotting gene expression changes from TG-GATEs dataset
@@ -85,17 +76,16 @@ Our first case study is based on a plot from a paper by Rangel-Escareño et al.,
 For plotting the gene expression under same conditions using the package, the first step is to load the datasets from disk or download them using the downloadTSet function above. In the following example, we use the toy dataset provided with the package to illustrate the process. 
 To plot, the function drugGeneResponseCurve has been used wherein mandatory inputs such as dataset, drug name, cell-line, molecular type, gene name, dose and time points should be specified.
 
-```{r, message = FALSE, results = 'hide'}
-devtools::install_github("bhklab/ToxicoGx")
+```{r, eval = FALSE, message = FALSE, results = 'hide'}
+install.packages("ToxicoGx")
 ```
-
 
 **Plot time dependent dose response of Carbon tetra chloride on CYP1A1 gene**
 ```{r, message = FALSE, fig.width = 8, fig.height = 3}
 library(PharmacoGx)
 library(ToxicoGx)
 library(ggplot2)
-library(tibble)
+
 # Load the tset 
 data(TGGATESsmall)
 ToxicoGx::drugGeneResponseCurve(TGGATESsmall, 
@@ -123,7 +113,7 @@ The HCC signature, already mapped to the gene level, has been included in this p
 
 ```{r, results = 'asis'}
 library(xtable)
-data("TGGATESsmall")
+#ata("TGGATESsmall")
 # To compute the effect of drug concentration on the molecular profile of the cell
 drug.perturbation <- ToxicoGx::drugPerturbationSig(tSet = TGGATESsmall,
                                          mDataType = "rna",
@@ -139,7 +129,8 @@ res <- apply(drug.perturbation[,,c("tstat", "fdr")],
                return(PharmacoGx::connectivityScore(x = x,
                                         y = HCC[,2,drop = FALSE],
                                         method = "fgsea", nperm = 100))
-             }, HCC = HCC_sig)
+             },
+             HCC = HCC_sig[1:199,])
 rownames(res) <- c("Connectivity", "P Value")
 res <- t(res)
 res <-  cbind(res,"FDR" = p.adjust(res[,2], method = "fdr"))
